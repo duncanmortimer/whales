@@ -1,0 +1,5 @@
+data
+small_data_sample
+local_settings.py
+*.pyc
+sample_submission.csv
