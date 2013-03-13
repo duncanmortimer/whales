@@ -14,7 +14,7 @@ from progressbar import RealProgressBar, withProgress
 data_files = []
 labels = []
 all_cases = []
-test_cases = np.arange(54503)
+submit_cases = np.arange(54503)
 
 with open("%s/data/train.csv"%WHALE_HOME, 'r') as csvfile:
     label_reader = csv.reader(csvfile)
@@ -121,7 +121,7 @@ def translate_and_project_onto_vector(cases, t_vec, p_vec, load_function=get_spe
     
 
 def load_data_subset(cases,
-                     load_function=get_training_case):
+                     load_function=get_log_spectrogram):
     labels_subset = labels[cases]
     data_subset = np.array([load_function(n).flatten() 
                    for n in withProgress(cases,
