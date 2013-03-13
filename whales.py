@@ -106,7 +106,7 @@ def calculate_mean_over_class(cases=all_cases, load_function=get_spectrogram):
     for ind, n in enumerate(withProgress(cases[1:], 
                                 RealProgressBar())):
         s = load_function(n)
-        mean_data = vemean_data + (s - mean_data)/(float (ind+2))
+        mean_data = mean_data + (s - mean_data)/(float (ind+2))
 
     return mean_data
 
