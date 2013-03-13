@@ -9,7 +9,7 @@ class ProgressMeter:
         self.total = total
     def update(self, pc):
         decade = pc*10/self.total
-        status_string = "\r["+"="*decade+" "*(9-decade)+"] %d of %d"%(pc,self.total)
+        status_string = "\r["+"="*decade+" "*(10-decade)+"] %d of %d"%(pc,self.total)
         stdout.write(status_string)
         stdout.flush()
 
