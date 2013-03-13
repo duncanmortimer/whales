@@ -41,6 +41,8 @@ long_specgram = { 'detrend':mpl.mlab.detrend_mean,
                   'Fs':2, 
                   'noverlap':178 }
 
+pca_specgram = short_specgram
+
 def load_aiff(filename):
     snd = aifc.open(filename)
     snd_string = snd.readframes(snd.getnframes())
@@ -118,11 +120,10 @@ def translate_and_project_onto_vector(cases, t_vec, p_vec, load_function=get_spe
              for n in withProgress(cases, RealProgressBar())]
     
 
-def load_data_subset(num_cases, 
-                     ordering=np.random.permutation(len(all_cases)), 
+def load_data_subset(cases,
                      load_function=get_training_case):
-    labels_subset = labels[ordering[:num_cases]]
+    labels_subset = labels[cases]
     data_subset = np.array([load_function(n).flatten() 
-                   for n in withProgress(ordering[:num_cases],
+                   for n in withProgress(cases,
                                          RealProgressBar())])
     return data_subset, labels_subset
