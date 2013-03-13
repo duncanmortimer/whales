@@ -29,8 +29,17 @@ with open("%s/data/train.csv"%WHALE_HOME, 'r') as csvfile:
 whale_cases = all_cases[labels==1]
 no_whale_cases = all_cases[labels==0]
 
-long_specgram = lambda s: specgram(s, detrend=mpl.mlab.detrend_mean, NFFT=256, Fs=2, noverlap=178)
-short_specgram = lambda s: specgram(s, detrend=mpl.mlab.detrend_mean, NFFT=128, Fs=2, noverlap=50)
+# Some spectrogram parameters
+
+short_specgram = { 'detrend':mpl.mlab.detrend_mean,
+                   'NFFT': 128, 
+                   'Fs':2, 
+                   'noverlap': 0}
+
+long_specgram = { 'detrend':mpl.mlab.detrend_mean, 
+                  'NFFT':256, 
+                  'Fs':2, 
+                  'noverlap':178 }
 
 def load_aiff(filename):
     snd = aifc.open(filename)
@@ -40,7 +49,7 @@ def load_aiff(filename):
     # MSB ordering, but numpy assumes LSB ordering.
     return np.fromstring(snd_string, dtype=np.uint16).byteswap()
 
-def get_test_case(n, normalised=True):
+def load_test_case(n, normalised=True):
     if n<0 or n>=54503:
         raise ValueError("test case out of range: %d" % n )
     else:
@@ -50,7 +59,7 @@ def get_test_case(n, normalised=True):
             s = s/float(np.max(np.abs(s)))
         return s
         
-def get_training_case(n, normalised=True):
+def load_training_case(n, normalised=True):
     if n < 0 or n >= 30000:
         raise ValueError("training case out of range: %d" % n)
     else:
@@ -60,20 +69,21 @@ def get_training_case(n, normalised=True):
             s = s/float(np.max(np.abs(s)))
         return s
 
-def get_spectrogram(n, train=True):
-    if train:
-        data = get_training_case(n)
+def load_case(n, training):
+    if training:
+        data = load_training_case(n)
     else:
-        data = get_test_case(n)
-    s,f,t = long_specgram(data)
+        data = load_test_case(n)
+    return data
+
+def get_spectrogram(n, training=True, spec_opts=long_specgram):
+    data = load_case(n, training)
+    s,f,t = specgram(data, **spec_opts)
     return s
 
-def get_log_spectrogram(n, train=True):
-    if train:
-        data = get_training_case(n)
-    else:
-        data = get_test_case(n)
-    s,f,t = long_specgram(data)
+def get_log_spectrogram(n, training=True, spec_opts=long_specgram):
+    data = load_case(n, training)
+    s,f,t = specgram(data, **spec_opts)
     return np.log(s)
 
 def visualize_cases(cases=all_cases, load_function=get_spectrogram):
