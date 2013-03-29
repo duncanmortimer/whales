@@ -88,10 +88,13 @@ def get_log_spectrogram(n, training=True, spec_opts=long_specgram):
     s,f,t = specgram(data, **spec_opts)
     return np.log(s)
 
-def visualize_cases(cases=all_cases, load_function=get_spectrogram):
+# 
+
+
+def visualize_cases(cases=all_cases, load_function=get_spectrogram, training=True):
     for n in cases:
         pl.clf()
-        d_long=load_function(n)
+        d_long=load_function(n, training=training)
         pl.subplot(211)
         pl.imshow(d_long, aspect='auto')
         pl.subplot(212)
@@ -110,20 +113,22 @@ def calculate_mean_over_class(cases=all_cases, load_function=get_spectrogram):
 
     return mean_data
 
-def translate_and_project_onto_vector(cases, t_vec, p_vec, load_function=get_spectrogram):
+def translate_and_project_onto_vector(cases, t_vec, p_vec, load_function=get_spectrogram, training=True):
     t_vec = t_vec.flatten()
     p_vec = p_vec.flatten()
     mag = np.sqrt(np.dot(p_vec, p_vec))
 
-    return [ np.dot(load_function(n).flatten() \
+    return [ np.dot(load_function(n, training=training).flatten() \
                         - t_vec, p_vec)/mag 
              for n in withProgress(cases, RealProgressBar())]
     
 
 def load_data_subset(cases,
-                     load_function=get_log_spectrogram):
+                     load_function=get_log_spectrogram,
+                     training=True):
     labels_subset = labels[cases]
-    data_subset = np.array([load_function(n).flatten() 
+    data_subset = np.array([load_function(n, training=training).flatten() 
                    for n in withProgress(cases,
                                          RealProgressBar())])
     return data_subset, labels_subset
+
